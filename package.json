@@ -1,0 +1,19 @@
+{
+  "name": "mern-ecommerce-dev",
+  "version": "1.0.0",
+  "description": "Development scripts for MERN E-commerce",
+  "scripts": {
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "build:all": "cd frontend && npm run build",
+    "start:backend": "cd backend && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "keywords": [],
+  "author": "Rully Hatrivianto",
+  "license": "ISC"
+}
