@@ -13,7 +13,7 @@ export default function AuthHandler() {
     if (user.role === "admin") {
       navigate("/admin");
     } else {
-      navigate("/");
+      navigate(import.meta.env.VITE_CLIENT_URL || "/");
     }
   }, [user, navigate]);
 

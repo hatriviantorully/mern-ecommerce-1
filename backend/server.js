@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors"; // ✅ IMPORT CORS
 import path from "path";
+import { fileURLToPath } from "url"; // ✅ FIX untuk ES Modules
 import authRoutes from "./routes/auth.route.js";
 import productRoutes from "./routes/product.route.js";
 import cartRoutes from "./routes/cart.route.js";
@@ -17,23 +18,24 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const __dirname = path.resolve();
+// ✅ FIX untuk ES Modules - PAKAI INI
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// ✅ CORS CONFIGURATION YANG LEBIH LENGKAP
+// ✅ CORS CONFIGURATION YANG DYNAMIC (PRODUCTION READY)
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    credentials: true, // ✅ INI SUDAH BENAR
+    origin: process.env.CLIENT_URL || "http://localhost:5173", // ✅ DYNAMIC
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
   })
 );
-
-// ✅ TAMBAHKAN INI UNTUK HANDLE PREFLIGHT REQUESTS
+// ✅ PREFLIGHT HANDLER YANG DYNAMIC
 app.options(
   "*",
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL || "http://localhost:5173", // ✅ DYNAMIC
     credentials: true,
   })
 );
@@ -58,11 +60,12 @@ app.get("/api/test-cors", (req, res) => {
   });
 });
 
+// ✅ PRODUCTION STATIC FILE SERVING - SUDAH BENAR!
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "/frontend/dist")));
+  app.use(express.static(path.join(__dirname, "../frontend/dist"))); // ✅ PATH DIPERBAIKI
 
   app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+    res.sendFile(path.resolve(__dirname, "../frontend/dist/index.html")); // ✅ PATH DIPERBAIKI
   });
 }
 
