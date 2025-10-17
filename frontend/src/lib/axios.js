@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5001/api",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
   withCredentials: true, // ✅ INI YANG PALING PENTING
   headers: {
     "Content-Type": "application/json",
@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     console.log("🚀 Axios Request:", {
-      url: config.url,
+      url: `${config.baseURL}${config.url}`, //config.url, (sebelumnya)
       method: config.method,
       withCredentials: config.withCredentials,
     });
