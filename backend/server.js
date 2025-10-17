@@ -10,7 +10,6 @@ import cartRoutes from "./routes/cart.route.js";
 import couponRoutes from "./routes/coupon.route.js";
 import paymentRoutes from "./routes/payment.route.js";
 import analyticsRoutes from "./routes/analytics.route.js";
-
 import { connectDB } from "./lib/db.js";
 
 dotenv.config();
@@ -23,12 +22,25 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ✅ CORS CONFIGURATION YANG DYNAMIC (PRODUCTION READY)
+// ✅ CORS CONFIGURATION
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://mern-ecommerce-1-doat.onrender.com", // ✅ domain render kamu
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173", // ✅ DYNAMIC
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log("❌ Blocked by CORS:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 // ✅ PREFLIGHT HANDLER YANG DYNAMIC
@@ -55,6 +67,7 @@ app.use("/api/analytics", analyticsRoutes);
 app.get("/api/test-cors", (req, res) => {
   res.json({
     message: "CORS is working!",
+    origin: req.headers.origin,
     cookies: req.cookies,
     timestamp: new Date().toISOString(),
   });
